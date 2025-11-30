@@ -7,10 +7,7 @@ import sequelize from './database/database';
 import { config } from './model/index.model';
 import { errorHandler } from './middleware/error.middleware';
 
-const allowedOrigins = [
-  "http://localhost:5173",
-  "http://localhost:3000",
-];
+const allowedOrigins = (process.env.ALLOWED_ORIGINS as string || "").split(",");
 
 const app = express();
 config(sequelize)

@@ -1,6 +1,7 @@
 import sequelize from '../database'
 import depoTypeSeed from './depoTypeSeed'
 import roleSeed from './roleSeed'
+import userSeed from './userSeed'
 
 async function run() {
   try {
@@ -8,7 +9,7 @@ async function run() {
     console.log('DB connected')
     // await roleSeed.down(sequelize.getQueryInterface())
     // await roleSeed.up(sequelize.getQueryInterface())
-    await depoTypeSeed.up(sequelize.getQueryInterface())
+    await userSeed.up(sequelize.getQueryInterface())
     // await depoTypeSeed.down(sequelize.getQueryInterface())
     console.log('Feature seeding done')
   } catch (err) {
