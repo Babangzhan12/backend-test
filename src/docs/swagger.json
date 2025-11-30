@@ -1,0 +1,1125 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Bank Saving System API Docs",
+    "version": "1.0.0"
+  },
+
+  "tags": [
+  {
+    "name": "Auth",
+    "description": "Authentication & Token Endpoints"
+  },
+  {
+    "name": "Account Transactions",
+    "description": "Deposit & Withdraw for user accounts"
+  },
+  {
+  "name": "Profile",
+  "description": "Manage user profile data"
+    },
+    {
+  "name": "Users",
+  "description": "Manage user accounts"
+    },
+    {
+    "name": "Accounts",
+    "description": "Manage user saving & deposito accounts"
+    },
+    {
+    "name": "Deposito Types",
+    "description": "Manage deposito type configurations"
+    }
+],
+
+  "components": {
+    "securitySchemes": {    
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "schemas": {
+        "Profile": {
+        "type": "object",
+        "properties": {
+            "profileId": { "type": "string", "format": "uuid" },
+            "userId": { "type": "string", "format": "uuid" },
+            "fullName": { "type": "string" },
+            "address": { "type": "string" },
+            "phoneNumber": { "type": "string" },
+            "ktpNumber": { "type": "string" },
+            "createdAt": { "type": "string", "format": "date-time" },
+            "updatedAt": { "type": "string", "format": "date-time" }
+        }
+        },
+        "UserResponse": {
+        "type": "object",
+        "properties": {
+            "userId": { "type": "string", "format": "uuid" },
+            "username": { "type": "string" },
+            "roleId": { "type": "string", "format": "uuid" },
+            "createdAt": { "type": "string", "format": "date-time" },
+            "updatedAt": { "type": "string", "format": "date-time" }
+        }
+        },
+        "UserCreateRequest": {
+        "type": "object",
+        "properties": {
+            "username": { "type": "string" },
+            "password": { "type": "string" },
+            "roleId": { "type": "string", "format": "uuid" }
+        },
+        "required": ["username", "password", "roleId"]
+        },
+        "UserUpdateRequest": {
+        "type": "object",
+        "properties": {
+            "username": { "type": "string" },
+            "password": { "type": "string" },
+            "pin": { "type": "string" },
+            "roleId": { "type": "string", "format": "uuid" }
+        }
+        },
+        "DepositoTypeSummary": {
+        "type": "object",
+        "properties": {
+            "depositoTypeId": { "type": "string", "format": "uuid" },
+            "name": { "type": "string" },
+            "initialDeposit": { "type": "number" },
+            "yearlyReturn": { "type": "number" }
+        }
+        },
+        "AccountResponse": {
+        "type": "object",
+        "properties": {
+            "accountId": { "type": "string", "format": "uuid" },
+            "userId": { "type": "string", "format": "uuid" },
+            "depositoTypeId": { "type": "string", "format": "uuid" },
+            "balance": { "type": "number" },
+            "depositoType": {
+            "$ref": "#/components/schemas/DepositoTypeSummary"
+            },
+            "createdAt": { "type": "string", "format": "date-time" },
+            "updatedAt": { "type": "string", "format": "date-time" }
+        }
+        },
+        "AccountCreateRequest": {
+        "type": "object",
+        "properties": {
+            "userId": { "type": "string" },
+            "depositoTypeId": { "type": "string" }
+        }
+        },
+        "AccountUpdateRequest": {
+        "type": "object",
+        "properties": {
+            "depositoTypeId": { "type": "string", "format": "uuid" },
+            "balance": { "type": "number" }
+        }
+        },
+        "Role": {
+        "type": "object",
+        "properties": {
+            "roleId": { "type": "string", "format": "uuid" },
+            "name": {
+            "type": "string",
+            "enum": ["superadmin", "admin", "customer"]
+            },
+            "createdAt": { "type": "string", "format": "date-time" },
+            "updatedAt": { "type": "string", "format": "date-time" },
+            "deletedAt": { "type": "string", "format": "date-time", "nullable": true }
+        }
+        },
+        "RoleCreateRequest": {
+        "type": "object",
+        "properties": {
+            "name": {
+            "type": "string",
+            "enum": ["superadmin", "admin", "customer"]
+            }
+        },
+        "required": ["name"]
+        },
+        "RoleUpdateRequest": {
+        "type": "object",
+        "properties": {
+            "name": {
+            "type": "string",
+            "enum": ["superadmin", "admin", "customer"]
+            }
+        }
+        },
+    "DepositoType": {
+    "type": "object",
+    "properties": {
+        "depositoTypeId": { "type": "string", "format": "uuid" },
+        "name": { "type": "string" },
+        "yearlyReturn": { "type": "number", "format": "float" },
+        "initialDeposit": { "type": "number", "format": "float" },
+        "description": { "type": "string", "nullable": true },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" },
+        "deletedAt": { "type": "string", "format": "date-time", "nullable": true }
+    }
+    },
+    "DepositoTypeCreateRequest": {
+    "type": "object",
+    "properties": {
+        "name": { "type": "string" },
+        "yearlyReturn": { "type": "number", "format": "float" },
+        "initialDeposit": { "type": "number", "format": "float" },
+        "description": { "type": "string", "nullable": true }
+    },
+    "required": ["name", "yearlyReturn", "initialDeposit"]
+    },
+    "DepositoTypeUpdateRequest": {
+    "type": "object",
+    "properties": {
+        "name": { "type": "string" },
+        "yearlyReturn": { "type": "number", "format": "float" },
+        "initialDeposit": { "type": "number", "format": "float" },
+        "description": { "type": "string", "nullable": true }
+    }
+    },
+    "PinRequest": {
+    "type": "object",
+    "properties": {
+        "pin": {
+        "type": "string",
+        "pattern": "^[0-9]{6}$",
+        "example": "123456",
+        "description": "6 digit angka"
+        }
+    },
+    "required": ["pin"]
+    },
+    "MeResponse": {
+    "type": "object",
+    "properties": {
+        "userId": { "type": "string", "format": "uuid" },
+        "username": { "type": "string" },
+        "role": { "type": "string", "nullable": true },
+        "hasProfile": { "type": "boolean" },
+        "profile": {
+        "$ref": "#/components/schemas/Profile"
+        },
+        "hasPin": { "type": "boolean" },
+        "accounts": {
+        "type": "array",
+        "items": { "$ref": "#/components/schemas/AccountResponse" }
+        },
+        "message": { "type": "string" }
+    }
+    },
+    "AccountTransaction": {
+    "type": "object",
+    "properties": {
+        "transactionId": { "type": "string", "format": "uuid" },
+        "accountId": { "type": "string", "format": "uuid" },
+        "type": {
+        "type": "string",
+        "enum": ["deposit", "withdraw"]
+        },
+        "amount": { "type": "number", "format": "float" },
+        "transactionDate": { "type": "string", "format": "date-time" },
+        "startingBalance": { "type": "number", "format": "float", "nullable": true },
+        "endingBalance": { "type": "number", "format": "float", "nullable": true },
+        "note": { "type": "string", "nullable": true },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" },
+        "deletedAt": { "type": "string", "format": "date-time", "nullable": true }
+    }
+    },
+    "AccountTransactionCreateRequest": {
+    "type": "object",
+    "properties": {
+        "accountId": { "type": "string", "format": "uuid" },
+        "type": { "type": "string", "enum": ["deposit", "withdraw"] },
+        "amount": { "type": "number", "format": "float" },
+        "transactionDate": { "type": "string", "format": "date-time", "nullable": true },
+        "note": { "type": "string", "nullable": true }
+    },
+    "required": ["accountId", "type", "amount"]
+    },
+    "AccountTransactionUpdateRequest": {
+    "type": "object",
+    "properties": {
+        "amount": { "type": "number", "format": "float" },
+        "transactionDate": { "type": "string", "format": "date-time", "nullable": true },
+        "note": { "type": "string", "nullable": true }
+    }
+    },
+    "AccountTransactionRequest": {
+    "type": "object",
+    "properties": {
+        "amount": { "type": "number", "format": "float", "example": 100000 },
+        "note": { "type": "string", "nullable": true, "example": "Setoran awal" },
+        "transactionDate": {
+        "type": "string",
+        "format": "date-time",
+        "nullable": true,
+        "description": "Optional. Default = server time"
+        }
+    },
+    "required": ["amount"]
+    }
+
+    }
+  },
+  
+
+  "security": [
+    { "BearerAuth": [] }
+  ],
+
+    "paths": {
+        "/api/account-transactions": {
+    "get": {
+        "tags": ["Account Transactions"],
+        "summary": "Get all account transactions",
+        "security": [{ "BearerAuth": [] }],
+        "responses": {
+        "200": {
+            "description": "List of transactions",
+            "content": {
+            "application/json": {
+                "schema": {
+                "type": "array",
+                "items": { "$ref": "#/components/schemas/AccountTransaction" }
+                }
+            }
+            }
+        }
+        }
+    },
+
+    "post": {
+        "tags": ["Account Transactions"],
+        "summary": "Create a transaction manually",
+        "security": [{ "BearerAuth": [] }],
+        "requestBody": {
+        "required": true,
+        "content": {
+            "application/json": {
+            "schema": { "$ref": "#/components/schemas/AccountTransactionCreateRequest" }
+            }
+        }
+        },
+        "responses": {
+        "201": {
+            "description": "Transaction created",
+            "content": {
+            "application/json": {
+                "schema": { "$ref": "#/components/schemas/AccountTransaction" }
+            }
+            }
+        },
+        "400": { "description": "Invalid request data" }
+        }
+    },
+
+    "put": {
+        "tags": ["Account Transactions"],
+        "summary": "Update an existing transaction",
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [
+        {
+            "name": "transactionId",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+        }
+        ],
+        "requestBody": {
+        "required": true,
+        "content": {
+            "application/json": {
+            "schema": { "$ref": "#/components/schemas/AccountTransactionUpdateRequest" }
+            }
+        }
+        },
+        "responses": {
+        "200": { "description": "Transaction updated" },
+        "404": { "description": "Transaction not found" }
+        }
+    },
+
+    "delete": {
+        "tags": ["Account Transactions"],
+        "summary": "Delete a specific transaction",
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [
+        {
+            "name": "transactionId",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+        }
+        ],
+        "responses": {
+        "200": { "description": "Transaction deleted successfully" },
+        "404": { "description": "Transaction not found" }
+        }
+    }
+    },
+
+    "/api/account-transactions/{transactionId}": {
+    "get": {
+        "tags": ["Account Transactions"],
+        "summary": "Get transaction by ID",
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [
+        {
+            "name": "transactionId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+        }
+        ],
+        "responses": {
+        "200": {
+            "description": "Transaction detail",
+            "content": {
+            "application/json": {
+                "schema": { "$ref": "#/components/schemas/AccountTransaction" }
+            }
+            }
+        },
+        "404": { "description": "Transaction not found" }
+        }
+    }
+    },
+
+    "/api/auth/set-pin": {
+    "post": {
+        "tags": ["Auth"],
+        "summary": "Set a 6-digit PIN for the authenticated user",
+        "security": [{ "BearerAuth": [] }],
+        "requestBody": {
+        "required": true,
+        "content": {
+            "application/json": {
+            "schema": { "$ref": "#/components/schemas/PinRequest" }
+            }
+        }
+        },
+        "responses": {
+        "200": {
+            "description": "PIN berhasil disimpan",
+            "content": {
+            "application/json": {
+                "schema": {
+                "type": "object",
+                "properties": {
+                    "message": { "type": "string", "example": "PIN berhasil disimpan" }
+                }
+                }
+            }
+            }
+        },
+        "400": { "description": "PIN harus 6 digit angka" },
+        "500": { "description": "Internal server error" }
+        }
+    }
+    },
+
+    "/api/auth/verify-pin": {
+    "post": {
+        "tags": ["Auth"],
+        "summary": "Verify the user's 6-digit PIN",
+        "security": [{ "BearerAuth": [] }],
+        "requestBody": {
+        "required": true,
+        "content": {
+            "application/json": {
+            "schema": { "$ref": "#/components/schemas/PinRequest" }
+            }
+        }
+        },
+        "responses": {
+        "200": {
+            "description": "PIN valid",
+            "content": {
+            "application/json": {
+                "schema": {
+                "type": "boolean",
+                "example": true
+                }
+            }
+            }
+        },
+        "400": {
+            "description": "Pin Invalid | Pin Belum di Set | Pin Salah"
+        },
+        "500": { "description": "Internal server error" }
+        }
+    }
+    },
+
+    "/api/auth/me": {
+    "get": {
+        "tags": ["Auth"],
+        "summary": "Get authenticated user information",
+        "security": [{ "BearerAuth": [] }],
+        "responses": {
+        "200": {
+            "description": "User information retrieved",
+            "content": {
+            "application/json": {
+                "schema": { "$ref": "#/components/schemas/MeResponse" }
+            }
+            }
+        },
+        "404": { "description": "User not found" },
+        "500": { "description": "Internal server error" }
+        }
+    }
+    },
+
+    "/api/deposito-types": {
+  "get": {
+    "tags": ["Deposito Types"],
+    "summary": "Get all deposito types",
+    "security": [{ "BearerAuth": [] }],
+    "responses": {
+      "200": {
+        "description": "List of deposito types",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "array",
+              "items": { "$ref": "#/components/schemas/DepositoType" }
+            }
+          }
+        }
+      }
+    }
+  },
+
+    "post": {
+    "tags": ["Deposito Types"],
+    "summary": "Create a new deposito type",
+    "security": [{ "BearerAuth": [] }],
+    "requestBody": {
+      "required": true,
+      "content": {
+        "application/json": {
+          "schema": { "$ref": "#/components/schemas/DepositoTypeCreateRequest" }
+        }
+      }
+    },
+    "responses": {
+      "201": {
+        "description": "Deposito type created",
+        "content": {
+          "application/json": {
+            "schema": { "$ref": "#/components/schemas/DepositoType" }
+          }
+        }
+      },
+      "400": { "description": "Invalid request body" }
+    }
+  }
+},
+
+"/api/deposito-types/{id}": {
+  "get": {
+    "tags": ["Deposito Types"],
+    "summary": "Get deposito type by ID",
+    "security": [{ "BearerAuth": [] }],
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": { "type": "string", "format": "uuid" }
+      }
+    ],
+    "responses": {
+      "200": {
+        "description": "Deposito type detail",
+        "content": {
+          "application/json": {
+            "schema": { "$ref": "#/components/schemas/DepositoType" }
+          }
+        }
+      },
+      "404": { "description": "Deposito type not found" }
+    }
+  },
+
+    "put": {
+    "tags": ["Deposito Types"],
+    "summary": "Update deposito type",
+    "security": [{ "BearerAuth": [] }],
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": { "type": "string", "format": "uuid" }
+      }
+    ],
+    "requestBody": {
+      "required": true,
+      "content": {
+        "application/json": {
+          "schema": { "$ref": "#/components/schemas/DepositoTypeUpdateRequest" }
+        }
+      }
+    },
+    "responses": {
+      "200": { "description": "Deposito type updated" },
+      "404": { "description": "Deposito type not found" }
+    }
+  },
+
+    "delete": {
+    "tags": ["Deposito Types"],
+    "summary": "Delete deposito type",
+    "security": [{ "BearerAuth": [] }],
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": { "type": "string", "format": "uuid" }
+      }
+    ],
+    "responses": {
+      "200": { "description": "Deposito type deleted successfully" },
+      "404": { "description": "Deposito type not found" }
+    }
+    }
+    },
+
+
+    "/api/roles": {
+  "get": {
+    "tags": ["Roles"],
+    "summary": "Get all roles",
+    "security": [{ "BearerAuth": [] }],
+    "responses": {
+      "200": {
+        "description": "List of roles",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "array",
+              "items": { "$ref": "#/components/schemas/Role" }
+            }
+          }
+        }
+      }
+    }
+  },
+
+    "post": {
+    "tags": ["Roles"],
+    "summary": "Create a role",
+    "security": [{ "BearerAuth": [] }],
+    "requestBody": {
+      "required": true,
+      "content": {
+        "application/json": {
+          "schema": { "$ref": "#/components/schemas/RoleCreateRequest" }
+        }
+      }
+    },
+    "responses": {
+      "201": {
+        "description": "Role created",
+        "content": {
+          "application/json": {
+            "schema": { "$ref": "#/components/schemas/Role" }
+          }
+        }
+      }
+    }
+  }
+},
+
+"/api/roles/{id}": {
+  "get": {
+    "tags": ["Roles"],
+    "summary": "Get role by ID",
+    "security": [{ "BearerAuth": [] }],
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": { "type": "string", "format": "uuid" }
+      }
+    ],
+    "responses": {
+      "200": {
+        "description": "Role detail",
+        "content": {
+          "application/json": {
+            "schema": { "$ref": "#/components/schemas/Role" }
+          }
+        }
+      },
+      "404": { "description": "Role not found" }
+    }
+  },
+
+    "put": {
+    "tags": ["Roles"],
+    "summary": "Update role",
+    "security": [{ "BearerAuth": [] }],
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": { "type": "string", "format": "uuid" }
+      }
+    ],
+    "requestBody": {
+      "required": true,
+      "content": {
+        "application/json": {
+          "schema": { "$ref": "#/components/schemas/RoleUpdateRequest" }
+        }
+      }
+    },
+    "responses": {
+      "200": { "description": "Role updated" },
+      "404": { "description": "Role not found" }
+    }
+  },
+
+    "delete": {
+    "tags": ["Roles"],
+    "summary": "Delete role",
+    "security": [{ "BearerAuth": [] }],
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": { "type": "string", "format": "uuid" }
+      }
+    ],
+    "responses": {
+      "200": { "description": "Role deleted successfully" },
+      "404": { "description": "Role not found" }
+    }
+  }
+},
+
+  "/api/accounts": {
+    "get": {
+      "tags": ["Accounts"],
+      "summary": "Get all accounts",
+      "security": [{ "BearerAuth": [] }],
+      "responses": {
+        "200": {
+          "description": "List of accounts",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": { "$ref": "#/components/schemas/AccountResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "post": {
+      "tags": ["Accounts"],
+      "summary": "Create a new account",
+      "security": [{ "BearerAuth": [] }],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": { "$ref": "#/components/schemas/AccountCreateRequest" }
+          }
+        }
+      },
+      "responses": {
+        "201": {
+          "description": "Account created successfully",
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/AccountResponse" }
+            }
+          }
+        },
+        "400": { "description": "Invalid request" }
+      }
+    }
+  },
+
+  "/api/accounts/{id}": {
+    "get": {
+      "tags": ["Accounts"],
+      "summary": "Get account by ID",
+      "security": [{ "BearerAuth": [] }],
+      "parameters": [
+        { "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+      ],
+      "responses": {
+        "200": {
+          "description": "Account detail",
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/AccountResponse" } } }
+        },
+        "404": { "description": "Account not found" }
+      }
+    },
+    "put": {
+      "tags": ["Accounts"],
+      "summary": "Update an account",
+      "security": [{ "BearerAuth": [] }],
+      "parameters": [
+        { "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+      ],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": { "schema": { "$ref": "#/components/schemas/AccountUpdateRequest" } }
+        }
+      },
+      "responses": {
+        "200": { "description": "Account updated successfully" },
+        "404": { "description": "Account not found" }
+      }
+    },
+    "delete": {
+      "tags": ["Accounts"],
+      "summary": "Delete account",
+      "security": [{ "BearerAuth": [] }],
+      "parameters": [
+        { "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+      ],
+      "responses": {
+        "200": { "description": "Account deleted successfully" },
+        "404": { "description": "Account not found" }
+      }
+    }
+  },
+
+  "/api/users": {
+    "get": {
+      "tags": ["Users"],
+      "summary": "Get all users",
+      "security": [{ "BearerAuth": [] }],
+      "responses": {
+        "200": {
+          "description": "List of users",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": { "$ref": "#/components/schemas/UserResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "post": {
+      "tags": ["Users"],
+      "summary": "Create a new user",
+      "security": [{ "BearerAuth": [] }],
+      "requestBody": {
+        "required": true,
+        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/UserCreateRequest" } } }
+      },
+      "responses": {
+        "201": {
+          "description": "User created",
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/UserResponse" } } }
+        },
+        "400": { "description": "Invalid input" }
+      }
+    }
+  },
+
+  "/api/users/{id}": {
+    "get": {
+      "tags": ["Users"],
+      "summary": "Get user by ID",
+      "security": [{ "BearerAuth": [] }],
+      "parameters": [
+        { "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+      ],
+      "responses": {
+        "200": {
+          "description": "User detail",
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/UserResponse" } } }
+        },
+        "404": { "description": "User not found" }
+      }
+    },
+    "put": {
+      "tags": ["Users"],
+      "summary": "Update user",
+      "security": [{ "BearerAuth": [] }],
+      "parameters": [
+        { "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+      ],
+      "requestBody": {
+        "required": true,
+        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/UserUpdateRequest" } } }
+      },
+      "responses": {
+        "200": { "description": "User updated" },
+        "404": { "description": "User not found" }
+      }
+    },
+    "delete": {
+      "tags": ["Users"],
+      "summary": "Delete user",
+      "security": [{ "BearerAuth": [] }],
+      "parameters": [
+        { "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+      ],
+      "responses": {
+        "200": { "description": "User deleted successfully" },
+        "404": { "description": "User not found" }
+      }
+    }
+  },
+
+  "/api/profile": {
+    "get": {
+      "tags": ["Profile"],
+      "summary": "Get all profiles",
+      "security": [{ "BearerAuth": [] }],
+      "responses": {
+        "200": {
+          "description": "List of profiles",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": { "$ref": "#/components/schemas/Profile" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "post": {
+      "tags": ["Profile"],
+      "summary": "Create profile",
+      "security": [{ "BearerAuth": [] }],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "userId": { "type": "string" },
+                "fullName": { "type": "string" },
+                "address": { "type": "string" },
+                "phoneNumber": { "type": "string" },
+                "ktpNumber": { "type": "string" }
+              }
+            }
+          }
+        }
+      },
+      "responses": {
+        "201": { "description": "Profile created" },
+        "400": { "description": "Invalid request" }
+      }
+    }
+  },
+
+  "/api/profile/{id}": {
+    "get": {
+      "tags": ["Profile"],
+      "summary": "Get profile by ID",
+      "security": [{ "BearerAuth": [] }],
+      "parameters": [
+        { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+      ],
+      "responses": {
+        "200": { "description": "Profile detail" },
+        "404": { "description": "Profile not found" }
+      }
+    },
+    "put": {
+      "tags": ["Profile"],
+      "summary": "Update profile",
+      "security": [{ "BearerAuth": [] }],
+      "parameters": [
+        { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+      ],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "fullName": { "type": "string" },
+                "address": { "type": "string" },
+                "phoneNumber": { "type": "string" },
+                "ktpNumber": { "type": "string" }
+              }
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": { "description": "Profile updated" },
+        "404": { "description": "Profile not found" }
+      }
+    },
+    "delete": {
+      "tags": ["Profile"],
+      "summary": "Delete profile",
+      "security": [{ "BearerAuth": [] }],
+      "parameters": [
+        { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+      ],
+      "responses": {
+        "200": { "description": "Profile deleted" },
+        "404": { "description": "Profile not found" }
+      }
+    }
+  },
+
+  "/api/account-transactions/{accountId}/deposit": {
+    "post": {
+      "tags": ["Account Transactions"],
+      "summary": "Deposit money",
+      "security": [{ "BearerAuth": [] }],
+      "parameters": [
+        { "name": "accountId", "in": "path", "required": true, "schema": { "type": "string" } }
+      ],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "amount": { "type": "number" },
+                "transactionDate": { "type": "string", "format": "date-time" }
+              }
+            }
+          }
+        }
+      },
+      "responses": {
+        "201": { "description": "Deposit successful" }
+      }
+    }
+  },
+
+  "/api/account-transactions/{accountId}/withdraw": {
+    "post": {
+      "tags": ["Account Transactions"],
+      "summary": "Withdraw money",
+      "security": [{ "BearerAuth": [] }],
+      "parameters": [
+        { "name": "accountId", "in": "path", "required": true, "schema": { "type": "string" } }
+      ],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "amount": { "type": "number" },
+                "transactionDate": { "type": "string", "format": "date-time" }
+              }
+            }
+          }
+        }
+      },
+      "responses": {
+        "201": { "description": "Withdraw successful" }
+      }
+    }
+  },
+
+  "/api/auth/register": {
+    "post": {
+      "tags": ["Auth"],
+      "summary": "Register new user",
+      "security": [],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "username": { "type": "string" },
+                "password": { "type": "string" }
+              }
+            }
+          }
+        }
+      },
+      "responses": {
+        "201": { "description": "User registered" }
+      }
+    }
+  },
+
+  "/api/auth/login": {
+    "post": {
+      "tags": ["Auth"],
+      "summary": "Login",
+      "security": [],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "username": { "type": "string" },
+                "password": { "type": "string" }
+              }
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Login successful"
+        }
+      }
+    }
+  },
+
+  "/api/auth/refresh-token": {
+    "post": {
+      "tags": ["Auth"],
+      "summary": "Refresh token",
+      "security": [{ "BearerAuth": [] }],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "refreshToken": { "type": "string" }
+              }
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": { "description": "Token refreshed" }
+      }
+    }
+  }
+}
+}
