@@ -11,6 +11,30 @@ export class AccountTransactionsController extends BaseController<AccountTransac
     });
   }
 
+protected async applyClientFilter(req: RequestWithUser) {
+  const { role, userId } = req.user || {};
+
+  if (!userId) return {};
+
+  switch (role) {
+    case 'superadmin':
+    case 'admin':
+      return {};
+    case 'customer':
+      const accounts = await Account.findAll({
+        where: { userId }
+      });
+
+      const accountIds = accounts.map(acc => acc.accountId);
+
+      return { accountId: accountIds };
+
+    default:
+      return {};
+  }
+}
+
+
   protected getAllOptions() {
     return {
       include: [

@@ -5,7 +5,7 @@ import { flexiblePaginate } from '../utils/paginate';
 import { MakeNullishOptional } from 'sequelize/types/utils';
 import { AuthUser } from '../middleware/jwt.middleware';
 import sequelize from '../database/database';
-import { Role } from '../model/index.model';
+import { Account, AccountTransaction, Role } from '../model/index.model';
 
 
 interface BaseControllerOptions {
@@ -153,7 +153,7 @@ export class BaseController<T extends Model> {
     });
   }
 
-  protected async applyClientFilter(req: RequestWithUser) {
+  protected async applyClientFilter(req: RequestWithUser): Promise<Record<string, any>> {
     const { role, userId } = req.user || {};
   const attributes = Object.keys((this.model as any).rawAttributes || {});
 
@@ -278,7 +278,7 @@ export class BaseController<T extends Model> {
       };
 
       const item = await this.model.findOne({
-        where: finalWhere,
+        where: finalWhere as any,
         include,
         paranoid: true, 
         ...restOptions,
@@ -336,6 +336,23 @@ export class BaseController<T extends Model> {
       }
 
       const created = await this.createWithNested(this.model, data, t);
+
+      if (created instanceof Account) {
+      const initialBalance = Number(created.getDataValue("balance") || 0);
+
+      await AccountTransaction.create(
+        {
+          accountId: created.accountId,
+          type: "deposit",
+          amount: initialBalance,
+          startingBalance: 0,
+          endingBalance: initialBalance,
+          transactionDate: new Date(),
+          note: "Initial account creation"
+        },
+        { transaction: t }
+      );
+    }
 
       const defaultOptions = this.getCreateOptions(data, includeOptions, fields);
 
